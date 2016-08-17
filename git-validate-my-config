@@ -1,0 +1,35 @@
+#!/bin/bash
+
+SYSTEM_PATH="/usr/bin:/usr/local/bin"
+
+gerrit_host=`git config -f .gitreview --get gerrit.host`
+gerrit_user=`git config --get gitreview.username`
+user_name=`git config --get user.name`
+user_email=`git config --get user.email`
+
+needs_gerrit="no"
+
+origin=$(git remote -v | grep -E '^origin' | head -n 1 | awk '{print $2}')
+
+if [ $needs_gerrit = "yes" -a -z "$gerrit_user" ]; then
+    echo "Must set gitreview.username!"
+    exit 2
+fi
+
+if [ -z "$user_name" ]; then
+    echo "Must set user.name!"
+    exit 2
+fi
+if [ -z "$user_email" ]; then
+    echo "Must set user.email!"
+    exit 2
+fi
+
+cmd=`basename $0`
+if [ $cmd = "git-validate-my-config" ]; then
+    echo "OK"
+else
+    # Now to find the real command to run
+    real_cmd=`PATH=$SYSTEM_PATH which $cmd`
+    exec $real_cmd "$@"
+fi

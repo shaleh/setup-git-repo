@@ -1,0 +1,11 @@
+user="Some Hacker"
+email="some.hacker@example.com"
+
+# I have a different user name for upstream Gerrit than internal Gerrit.
+if [ ! -z "$gerrit_host" ]; then
+    if [ $gerrit_host = "review.example.com" ]; then
+        gerrit_user="hacks"
+    else
+        gerrit_user="some_hacker"
+    fi
+fi

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -x
+
+origin=$(git remote -v | grep -e '^origin' | head -n 1 | awk '{print $2}' )
+
+gerrit_host=`git config -f .gitreview --get gerrit.host 2>/dev/null`
+
+at_work="no"
+
+# Put code here to set `at_work` to "yes".
+
+if [ $at_work = "no" ]; then
+    if [ ! -f ~/.config/git/personal-settings ]; then
+        echo "Need to configure ~/.config/git/personal-settings"
+        exit 2
+    fi
+    . ~/.config/git/personal-settings
+else
+    if [ ! -f ~/.config/git/work-settings ]; then
+        echo "Need to configure ~/.config/git/work-settings"
+        exit 2
+    fi
+    . ~/.config/git/work-settings
+
+    if [ ! -z "$gerrit_host" ]; then
+        git config gitreview.username "$gerrit_user"
+    fi
+fi
+
+git config user.email "$email"
+git config user.name "$user"
